@@ -42,8 +42,8 @@ const mainSecurityGroup = new aws.ec2.SecurityGroup("mainSecurityGroup", {
   ingress: [
     {
       protocol: "TCP",
-      fromPort: 8080,
-      toPort: 8080,
+      fromPort: 80,
+      toPort: 80,
       cidrBlocks: ["0.0.0.0/0"],
     },
   ],
@@ -111,7 +111,7 @@ const nodeAppTargetGroup = new aws.lb.TargetGroup("nodeAppTargetGroup", {
   vpcId: main.id,
   protocol: "TCP",
   targetType: "ip",
-  port: 8080,
+  port: 80,
 });
 
 const nodeAppBalencer = new aws.lb.LoadBalancer("nodeAppBalencer", {
@@ -123,7 +123,7 @@ const nodeAppBalencer = new aws.lb.LoadBalancer("nodeAppBalencer", {
 
 const nodeAppListener = new aws.lb.Listener("nodeAppListener", {
   loadBalancerArn: nodeAppBalencer.arn,
-  port: 8080,
+  port: 80,
   protocol: "TCP",
   defaultActions: [
     {
@@ -144,7 +144,9 @@ const image = new docker.Image(customImage, {
     context: ".",
     dockerfile: "./app/Dockerfile",
   },
-  imageName: pulumi.interpolate`${imageName}:${imageVersion}`,
+  imageName: pulumi.interpolate`${imageName}:${imageVersion}`.apply((url) =>
+    url.slice(0, 255)
+  ),
 });
 
 const nodeAppTaskDefinition = new aws.ecs.TaskDefinition(
@@ -161,11 +163,11 @@ const nodeAppTaskDefinition = new aws.ecs.TaskDefinition(
       operatingSystemFamily: "LINUX",
       cpuArchitecture: "ARM64",
     },
-    containerDefinitions: imageName.apply((url) =>
+    containerDefinitions: image.imageName.apply((url) =>
       JSON.stringify([
         {
           name: "nodeContainer",
-          image: `${url}:v1.0.0`,
+          image: `${url}`,
           memory: 512,
           essential: true,
           logConfiguration: {
@@ -179,8 +181,8 @@ const nodeAppTaskDefinition = new aws.ecs.TaskDefinition(
           },
           portMappings: [
             {
-              containerPort: 8080,
-              hostPort: 8080,
+              containerPort: 80,
+              hostPort: 80,
               protocol: "TCP",
             },
           ],
@@ -208,7 +210,7 @@ const nodeAppService = new aws.ecs.Service(
       {
         containerName: "nodeContainer",
         targetGroupArn: nodeAppTargetGroup.arn,
-        containerPort: 8080,
+        containerPort: 80,
       },
     ],
   },
