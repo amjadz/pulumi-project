@@ -1,2 +1,5 @@
 config:
   aws:region: us-east-2
+  server:newServerMessage: "Hello New World"
+  server:serverPort: 8080
+  server:serverHost: "0.0.0.0"
