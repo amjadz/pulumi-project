@@ -4,9 +4,10 @@
     "description": "Node.js on Docker",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js"
+        "start": "node server.js"
     },
     "dependencies": {
-      "express": "latest"
+        "dotenv": "^16.4.5",
+        "express": "latest"
     }
-  }
+}

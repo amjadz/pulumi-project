@@ -1,6 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as docker from "@pulumi/docker";
 import * as aws from "@pulumi/aws";
+import * as Config from "./config";
 
 const cluster = new aws.ecs.Cluster("cluster", {});
 
