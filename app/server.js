@@ -6,8 +6,8 @@ require('dotenv').config()
 // const {helloWorldMessage, serverPort, serverHost} = require('./config')
 
 // Constants
-const PORT = serverPort;
-const HOST = serverHost;
+const PORT = 8080;
+const HOST = '0.0.0.0';
 
 // App
 const app = express();
