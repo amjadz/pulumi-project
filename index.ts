@@ -136,7 +136,7 @@ const nodeAppListener = new aws.lb.Listener("nodeAppListener", {
 
 const repo = new aws.ecr.Repository("pulumi-example");
 
-const imageName = repo.repositoryUrl.apply((url) => url.slice(0, 255));
+const imageName = repo.repositoryUrl;
 const customImage = "pulumi-example-img";
 const imageVersion = "v1.0.0";
 
@@ -171,6 +171,9 @@ const nodeAppTaskDefinition = new aws.ecs.TaskDefinition(
           image: `${url}`,
           memory: 512,
           essential: true,
+          enviornment: [
+            { name: "HELLO_WORLD_MESSAGE", value: "HELLO WORLD! :)" },
+          ],
           logConfiguration: {
             logDriver: "awslogs",
             options: {
