@@ -142,7 +142,7 @@ const imageVersion = "v1.0.0";
 
 const image = new docker.Image(customImage, {
   build: {
-    context: ".",
+    context: "./app",
     dockerfile: "./app/Dockerfile",
   },
   imageName: pulumi.interpolate`${imageName}:${imageVersion}`.apply((url) =>
