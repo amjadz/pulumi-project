@@ -43,8 +43,8 @@ const mainSecurityGroup = new aws.ec2.SecurityGroup("mainSecurityGroup", {
   ingress: [
     {
       protocol: "TCP",
-      fromPort: 80,
-      toPort: 80,
+      fromPort: 8080,
+      toPort: 8080,
       cidrBlocks: ["0.0.0.0/0"],
     },
   ],
@@ -112,7 +112,7 @@ const nodeAppTargetGroup = new aws.lb.TargetGroup("nodeAppTargetGroup", {
   vpcId: main.id,
   protocol: "TCP",
   targetType: "ip",
-  port: 80,
+  port: 8080,
 });
 
 const nodeAppBalencer = new aws.lb.LoadBalancer("nodeAppBalencer", {
@@ -124,7 +124,7 @@ const nodeAppBalencer = new aws.lb.LoadBalancer("nodeAppBalencer", {
 
 const nodeAppListener = new aws.lb.Listener("nodeAppListener", {
   loadBalancerArn: nodeAppBalencer.arn,
-  port: 80,
+  port: 8080,
   protocol: "TCP",
   defaultActions: [
     {
@@ -185,8 +185,8 @@ const nodeAppTaskDefinition = new aws.ecs.TaskDefinition(
           },
           portMappings: [
             {
-              containerPort: 80,
-              hostPort: 80,
+              containerPort: 8080,
+              hostPort: 8080,
               protocol: "TCP",
             },
           ],
@@ -214,7 +214,7 @@ const nodeAppService = new aws.ecs.Service(
       {
         containerName: "nodeContainer",
         targetGroupArn: nodeAppTargetGroup.arn,
-        containerPort: 80,
+        containerPort: 8080,
       },
     ],
   },
